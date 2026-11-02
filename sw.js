@@ -1,8 +1,11 @@
-const CACHE = "quickimg-v1";
+const CACHE = "quickimg-v2";
 const CORE = [
   "./",
   "./index.html",
   "./manifest.json",
+  "./favicon.ico",
+  "./favicon.svg",
+  "./favicon-48x48.png",
   "./css/custom.css",
   "./js/app.js",
   "./js/modules/compress.js",
