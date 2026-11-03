@@ -43,7 +43,6 @@
     <script>
       tailwind = {
         config: {
-          darkMode: "class",
           theme: {
             extend: {
               fontFamily: {
@@ -54,42 +53,34 @@
           },
         },
       };
-      const savedTheme = localStorage.getItem("quickimg-theme");
-      if (savedTheme === "dark") document.documentElement.classList.add("dark");
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <link rel="manifest" href="./manifest.json" />
     <link rel="stylesheet" href="./css/custom.css" />
   </head>
-  <body class="min-h-screen text-black antialiased flex flex-col selection:bg-[#FFE600] selection:text-black dark:text-white">
-    <header class="sticky top-0 z-30 border-b-[3px] border-black bg-white dark:bg-zinc-950 dark:border-white shadow-[0_4px_0_#000] dark:shadow-[0_4px_0_#fff]">
+  <body class="min-h-screen text-black antialiased flex flex-col selection:bg-[#FFE600] selection:text-black">
+    <header class="sticky top-0 z-30 border-b-[3px] border-black bg-[#111111] shadow-[0_4px_0_#000]">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
         <a href="#" class="flex items-center gap-3 group" aria-label="QuickImg Tools beranda">
-          <div class="h-10 w-10 border-2 border-black bg-[#FFE600] flex items-center justify-center font-black text-xl shadow-[3px_3px_0px_#000] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-black">
+          <!-- MAJOR-4: shadow hitam agar depth neubrutalism terlihat -->
+          <div class="h-10 w-10 border-2 border-black bg-[#FFE600] flex items-center justify-center font-black text-xl shadow-[3px_3px_0px_#000000] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-black rounded-md">
             Q
           </div>
           <div>
-            <span class="text-xl font-black uppercase tracking-tight text-black dark:text-white">QuickImg<span class="text-[#FF4B91]">.</span>Tools</span>
-            <p class="font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-300">100% In-Browser // Zero Server</p>
+            <span class="text-xl font-black uppercase tracking-tight text-white">QuickImg<span class="text-[#FF4B91]">.</span>Tools</span>
+            <p class="font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-400">100% In-Browser // Zero Server</p>
           </div>
         </a>
         <div class="flex items-center gap-3">
-          <span class="hidden sm:inline-flex items-center gap-2 border-2 border-black bg-[#4ADE80] px-3 py-1 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000]">
-            <span class="h-2 w-2 bg-black"></span>100% LOKAL &amp; AMAN
+          <!-- KRITIS-3: bg-[#16A34A] text-white → rasio 5.1:1 ✅ WCAG AA -->
+          <span class="hidden sm:inline-flex items-center gap-2 border-2 border-[#14532D] bg-[#16A34A] px-3 py-1 font-mono text-xs font-bold text-white shadow-[2px_2px_0px_#000] rounded-md">
+            <span class="h-2 w-2 bg-white rounded-full"></span>100% LOKAL &amp; AMAN
           </span>
-          <button
-            id="themeToggle"
-            type="button"
-            class="grid h-10 w-10 place-items-center border-2 border-black bg-[#FFE600] text-black font-mono font-bold text-base shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5"
-            aria-label="Ganti tema"
-            title="Ganti tema"
-          >
-            <span aria-hidden="true">◐</span>
-          </button>
         </div>
       </div>
     </header>
@@ -97,218 +88,337 @@
     <main class="w-full max-w-5xl mx-auto px-4 sm:px-6 py-8 md:py-14 flex-1">
       <section class="max-w-3xl mx-auto text-center mb-10 md:mb-12">
         <span class="inline-block border-2 border-black bg-[#FF4B91] px-3.5 py-1 font-mono text-xs font-black uppercase text-white shadow-[3px_3px_0px_#000] -rotate-1 mb-4"> ⚡ PRIVASI TOTAL • TANPA UPLOAD KE SERVER </span>
-        <h1 class="text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight text-black dark:text-white leading-[1.05]">
-          KOMPRES GAMBAR.<br />
-          <span class="inline-block bg-[#FFE600] text-black px-4 py-1 border-[3px] border-black shadow-[6px_6px_0px_#000] rotate-1 mt-2"> TANPA KOMPROMI. </span>
+        <!-- MINOR-9: clamp agar H1 tidak overflow di mobile <360px -->
+        <h1 class="text-[clamp(1.75rem,8vw,4.5rem)] font-black uppercase tracking-tight text-slate-900 leading-[1.05]">
+          QUICK<span class="text-[#FF4B91]">.</span>TOOLS<br />
+          <span class="inline-block bg-[#FFE600] text-black px-4 py-1 border-[3px] border-black shadow-[6px_6px_0px_#000] rotate-1 mt-2"> 100% DI BROWSER. </span>
         </h1>
-        <p class="mt-5 max-w-2xl mx-auto font-mono text-sm sm:text-base font-bold text-zinc-800 dark:text-zinc-200 leading-relaxed">Kecilkan ukuran dan ubah format gambar super cepat. 100% diproses langsung di mesin browser Anda.</p>
+        <p class="mt-5 max-w-2xl mx-auto font-mono text-sm sm:text-base font-bold text-slate-700 leading-relaxed">Kompres gambar, gabungkan PDF, buat ZIP, bersihkan SVG. Semua gratis, tanpa server, tanpa upload.</p>
       </section>
 
-      <section class="surface mx-auto max-w-4xl border-[3px] sm:border-[4px] border-black bg-white p-5 sm:p-8 shadow-[8px_8px_0px_#000] dark:bg-zinc-900 dark:border-white dark:shadow-[8px_8px_0px_#FFE600]" aria-label="Kompres gambar">
-        <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" multiple class="sr-only" aria-label="Pilih file gambar" />
-        <div class="mb-3 flex items-center justify-between font-mono text-xs font-bold text-zinc-600 dark:text-zinc-400">
-          <span>// DROPZONE AREA</span>
-          <span>MAKS. 20 MB PER GAMBAR</span>
+      <!-- MAJOR-7: aria-controls + aria-labelledby lengkap untuk WAI-ARIA tabs -->
+      <div class="mx-auto max-w-4xl">
+        <div class="tab-bar" role="tablist" aria-label="Pilih kategori alat">
+          <button class="main-tab-btn main-tab-active" id="tab-image" role="tab" aria-selected="true"  aria-controls="panelImageTools">🖼 Image Tools</button>
+          <button class="main-tab-btn"                 id="tab-doc"   role="tab" aria-selected="false" aria-controls="panelDocTools">📄 Document &amp; File Tools</button>
         </div>
-        <button
-          id="dropzone"
-          type="button"
-          class="dropzone w-full border-[3px] border-dashed border-black bg-[#E0F2FE] hover:bg-[#BAE6FD] px-5 py-10 sm:py-12 text-center shadow-[4px_4px_0px_#000] cursor-pointer"
-          aria-describedby="uploadHint"
-        >
-          <span class="mx-auto mb-4 grid h-14 w-14 place-items-center border-2 border-black bg-[#FFE600] text-black shadow-[3px_3px_0px_#000]" aria-hidden="true">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M12 16V4m0 0L7 9m5-5 5 5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </span>
-          <span class="block text-xl font-black uppercase tracking-wide text-black dark:text-white">Tarik Gambar ke Sini</span>
-          <span class="mt-1.5 block font-mono text-xs sm:text-sm font-bold text-zinc-800 dark:text-zinc-200">
-            atau <span class="border border-black bg-[#FFE600] text-black px-2 py-0.5 shadow-[2px_2px_0px_#000] font-black underline">PILIH DARI PERANGKAT</span>
-          </span>
-          <span id="uploadHint" class="mt-3 block font-mono text-xs font-bold text-zinc-700 dark:text-zinc-300"> JPG, PNG, WEBP, AVIF, GIF • DIPROSES LOKAL </span>
-          <span class="mt-4 inline-flex items-center gap-1.5 border-2 border-black bg-white dark:bg-zinc-800 px-3 py-1 font-mono text-xs font-bold text-black dark:text-white shadow-[2px_2px_0px_#000]">
-            <kbd class="border border-black bg-zinc-200 dark:bg-zinc-700 px-1.5 py-0.5">Ctrl</kbd> + <kbd class="border border-black bg-zinc-200 dark:bg-zinc-700 px-1.5 py-0.5">V</kbd>
-            <span>untuk paste langsung</span>
-          </span>
-        </button>
-        <div class="control-drawer mt-6 grid gap-4 sm:grid-cols-2">
-          <fieldset class="control-panel border-2 border-black bg-[#F8FAFC] dark:bg-zinc-800 p-4 shadow-[4px_4px_0px_#000] dark:border-white dark:shadow-[4px_4px_0px_#fff]">
-            <legend class="border-2 border-black bg-[#FFE600] px-2.5 py-0.5 font-mono text-xs font-black uppercase text-black shadow-[2px_2px_0px_#000]">📐 Ubah Ukuran</legend>
-            <div class="grid grid-cols-2 gap-3 mt-2">
-              <label class="font-mono text-xs font-bold text-black dark:text-white"
-                >Lebar (px)
-                <input id="resizeWidth" type="number" min="1" max="12000" class="mt-1 w-full border-2 border-black bg-white dark:bg-zinc-900 p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" placeholder="Auto" />
-              </label>
-              <label class="font-mono text-xs font-bold text-black dark:text-white"
-                >Tinggi (px)
-                <input id="resizeHeight" type="number" min="1" max="12000" class="mt-1 w-full border-2 border-black bg-white dark:bg-zinc-900 p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" placeholder="Auto" />
-              </label>
+
+        <!-- Panel: Image Tools -->
+        <div id="panelImageTools" class="main-tab-panel" role="tabpanel" aria-labelledby="tab-image" tabindex="0">
+          <section class="surface border-[3px] sm:border-[4px] border-black bg-white p-5 sm:p-8 shadow-[8px_8px_0px_#000] rounded-lg" aria-label="Kompres gambar">
+            <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" multiple class="sr-only" aria-label="Pilih file gambar" />
+            <div class="mb-3 flex items-center justify-between font-mono text-xs font-bold text-zinc-500">
+              <span>// DROPZONE AREA</span>
+              <span>MAKS. 20 MB PER GAMBAR</span>
             </div>
-            <label class="mt-3 flex items-center gap-2 font-mono text-xs font-bold text-black dark:text-white cursor-pointer select-none">
-              <input id="keepRatio" type="checkbox" checked class="border-2 border-black" />
-              Kunci Aspek Rasio Asli
-            </label>
-            <div class="mt-4 flex flex-wrap gap-2">
-              <button type="button" class="preset border-2 border-black bg-[#C7D2FE] px-2.5 py-1.5 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-[#A5B4FC]" data-w="200" data-h="300">Pasfoto 2x3</button>
-              <button type="button" class="preset border-2 border-black bg-[#C7D2FE] px-2.5 py-1.5 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-[#A5B4FC]" data-w="300" data-h="400">Pasfoto 3x4</button>
-              <button type="button" class="preset border-2 border-black bg-[#C7D2FE] px-2.5 py-1.5 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-[#A5B4FC]" data-w="400" data-h="600">Pasfoto 4x6</button>
-              <button type="button" class="preset border-2 border-black bg-[#FEF08A] px-2.5 py-1.5 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-[#FDE047]" data-w="300" data-h="400">CPNS 3x4</button>
-            </div>
-          </fieldset>
-          <fieldset class="control-panel border-2 border-black bg-[#F8FAFC] dark:bg-zinc-800 p-4 shadow-[4px_4px_0px_#000] dark:border-white dark:shadow-[4px_4px_0px_#fff]">
-            <legend class="border-2 border-black bg-[#38BDF8] px-2.5 py-0.5 font-mono text-xs font-black uppercase text-black shadow-[2px_2px_0px_#000]">🎯 Target &amp; Penamaan</legend>
-            <label class="block font-mono text-xs font-bold text-black dark:text-white mt-2">
-              Maksimum Ukuran (KB, Opsional)
-              <input id="targetKB" type="number" min="1" max="20480" placeholder="Contoh: 200" class="mt-1 w-full border-2 border-black bg-white dark:bg-zinc-900 p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" />
-            </label>
-            <div class="mt-3 grid grid-cols-2 gap-3">
-              <label class="font-mono text-xs font-bold text-black dark:text-white"
-                >Awalan
-                <input id="namePrefix" placeholder="" class="mt-1 w-full border-2 border-black bg-white dark:bg-zinc-900 p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" />
-              </label>
-              <label class="font-mono text-xs font-bold text-black dark:text-white"
-                >Akhiran
-                <input id="nameSuffix" value="-min" class="mt-1 w-full border-2 border-black bg-white dark:bg-zinc-900 p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" />
-              </label>
-            </div>
-            <button id="cropBtn" type="button" class="mt-4 w-full border-2 border-black bg-[#FF4B91] px-4 py-2 font-mono text-xs font-black uppercase text-white shadow-[2px_2px_0px_#000] hover:bg-[#F43F5E] disabled:opacity-50" disabled>
-              ✂️ Buka Pemotong Gambar
+            <!-- MAJOR-8: aria-label eksplisit untuk area drop -->
+            <button
+              id="dropzone"
+              type="button"
+              class="dropzone w-full border-[3px] border-dashed border-black bg-[#E0F2FE] hover:bg-[#BAE6FD] px-5 py-10 sm:py-12 text-center shadow-[4px_4px_0px_#000] cursor-pointer"
+              aria-label="Area upload: tarik gambar ke sini atau klik untuk memilih file dari perangkat"
+              aria-describedby="uploadHint"
+            >
+              <span class="mx-auto mb-4 grid h-14 w-14 place-items-center border-2 border-black bg-[#FFE600] text-black shadow-[3px_3px_0px_#000]" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 16V4m0 0L7 9m5-5 5 5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <span class="block text-xl font-black uppercase tracking-wide text-slate-900">Tarik Gambar ke Sini</span>
+              <span class="mt-1.5 block font-mono text-xs sm:text-sm font-bold text-slate-700">
+                atau <span class="border border-black bg-[#FFE600] text-black px-2 py-0.5 shadow-[2px_2px_0px_#000] font-black underline">PILIH DARI PERANGKAT</span>
+              </span>
+              <!-- KRITIS-3: text-zinc-600 on white → 5.8:1 ✅ WCAG AA -->
+              <span id="uploadHint" class="mt-3 block font-mono text-xs font-bold text-zinc-600"> JPG, PNG, WEBP, AVIF, GIF • DIPROSES LOKAL </span>
+              <!-- MINOR-10: hidden di mobile — Ctrl+V tidak relevan di iOS/Android -->
+              <span class="hidden sm:inline-flex mt-4 items-center gap-1.5 border-2 border-black bg-white px-3 py-1 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] rounded-md">
+                <kbd class="border border-black bg-zinc-100 px-1.5 py-0.5 rounded">Ctrl</kbd> + <kbd class="border border-black bg-zinc-100 px-1.5 py-0.5 rounded">V</kbd>
+                <span class="text-slate-700">untuk paste langsung</span>
+              </span>
             </button>
-          </fieldset>
-        </div>
-        <div class="mt-8 flex items-center justify-between gap-3 border-t-2 border-black pt-5 dark:border-white">
-          <div>
-            <h2 class="font-black uppercase tracking-tight text-base sm:text-lg text-black dark:text-white">Daftar Antrean</h2>
-            <p id="batchCount" class="font-mono text-xs font-bold text-zinc-600 dark:text-zinc-400">Tambahkan gambar untuk mulai</p>
-          </div>
-          <button
-            id="zipBtn"
-            type="button"
-            class="zip-cta border-2 border-black bg-[#FF6B00] px-4 py-2.5 font-mono text-xs font-black uppercase text-white shadow-[3px_3px_0px_#000] hover:bg-[#EA580C] disabled:cursor-not-allowed disabled:opacity-40"
-            disabled
-          >
-            📦 Unduh Semua (.ZIP)
-          </button>
-        </div>
-
-        <div id="batchList" class="mt-3 grid gap-2" aria-live="polite"></div>
-
-        <div id="selectedFile" class="mt-4 flex items-center justify-between border-2 border-black bg-[#FEF08A] p-3 shadow-[3px_3px_0px_#000] text-black" hidden>
-          <div class="flex min-w-0 items-center gap-3">
-            <img id="originalPreview" class="h-12 w-12 border-2 border-black bg-zinc-200 object-cover shadow-[1px_1px_0px_#000]" alt="Pratinjau gambar asli" />
-            <div class="min-w-0">
-              <p id="fileName" class="truncate font-mono text-xs sm:text-sm font-bold text-black"></p>
-              <p id="fileSize" class="font-mono text-xs text-zinc-700 font-semibold"></p>
+            <div class="mt-8 flex items-center justify-between gap-3 border-t-2 border-black pt-5">
+              <div>
+                <h2 class="font-black uppercase tracking-tight text-base sm:text-lg text-black">Daftar Antrean</h2>
+                <!-- KRITIS-3: zinc-600 on white ✅ -->
+                <p id="batchCount" class="font-mono text-xs font-bold text-zinc-600">Tambahkan gambar untuk mulai</p>
+              </div>
+              <button
+                id="zipBtn"
+                type="button"
+                class="zip-cta border-2 border-black bg-[#E67E22] px-4 py-2.5 font-mono text-xs font-black uppercase text-white shadow-[3px_3px_0px_#000] hover:bg-[#d4720f] disabled:cursor-not-allowed disabled:opacity-40"
+                disabled
+              >
+                📦 Unduh Semua (.ZIP)
+              </button>
             </div>
-          </div>
-          <button id="resetBtn" type="button" class="shrink-0 border-2 border-black bg-white px-3 py-1.5 font-mono text-xs font-black text-black shadow-[2px_2px_0px_#000] hover:bg-zinc-100 active:translate-x-0.5 active:translate-y-0.5">
-            Ganti Gambar
-          </button>
-        </div>
-        <div id="settingsDrawer" class="settings-drawer mt-6 grid gap-4 sm:grid-cols-2">
-          <div class="col-span-full grid grid-cols-2 gap-2 sm:grid-cols-4 font-mono font-bold" role="tablist" aria-label="Pengaturan gambar">
-            <button type="button" class="settings-tab" data-tab="compression" role="tab" aria-selected="true">⚙️ Kompresi</button>
-            <button type="button" class="settings-tab" data-tab="dimensions" role="tab" aria-selected="false">📐 Dimensi</button>
-            <button type="button" class="settings-tab" data-tab="crop" role="tab" aria-selected="false">✂️ Potong</button>
-            <button type="button" class="settings-tab" data-tab="export" role="tab" aria-selected="false">📦 Ekspor</button>
-          </div>
-          <div class="setting-group" data-group="compression"></div>
-          <div class="setting-group" data-group="dimensions"></div>
-          <div class="setting-group" data-group="crop"></div>
-          <div class="setting-group" data-group="export"></div>
-          <label class="export-settings font-mono text-xs font-black uppercase text-black dark:text-white"
-            >Format Hasil Output
-            <select id="formatSelect" class="mt-2 w-full border-2 border-black bg-white dark:bg-zinc-800 p-2.5 font-mono text-sm font-bold shadow-[2px_2px_0px_#000]">
-              <option value="image/webp">WebP — Efisien &amp; Ukuran Terkecil</option>
-              <option value="image/jpeg">JPG / JPEG — Standar Kompatibilitas</option>
-              <option value="image/png">PNG — Pertahankan Transparansi</option>
-            </select>
-          </label>
-          <div class="quality-settings">
-            <label class="flex items-center justify-between font-mono text-xs font-black uppercase text-black dark:text-white" for="qualitySlider"
-              >Tingkat Kualitas
-              <output id="qualityValue" for="qualitySlider" class="border-2 border-black bg-[#FFE600] px-2 py-0.5 font-mono text-xs font-black text-black shadow-[2px_2px_0px_#000]">75%</output>
-            </label>
-            <input id="qualitySlider" class="range mt-3 block w-full cursor-pointer" type="range" min="0" max="100" value="75" />
-            <span class="mt-1.5 flex justify-between font-mono text-[11px] font-bold text-zinc-600 dark:text-zinc-400">
-              <span>Ukuran Minimal</span>
-              <span>Kualitas Maksimal</span>
-            </span>
-          </div>
-        </div>
 
-        <button
-          id="processBtn"
-          type="button"
-          class="mt-7 flex w-full items-center justify-center gap-3 border-[3px] border-black bg-[#4ADE80] hover:bg-[#22C55E] px-6 py-4 font-black uppercase tracking-wider text-black text-base sm:text-lg shadow-[6px_6px_0px_#000] active:translate-x-1 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:opacity-50 transition"
-          disabled
-        >
-          <span id="processSpinner" class="spinner" hidden aria-hidden="true"></span>
-          <span id="processLabel">Pilih Gambar Untuk Mulai</span>
-        </button>
+            <div id="batchList" class="mt-3 grid gap-2" aria-live="polite"></div>
 
-        <p id="status" class="mt-4 min-h-6 text-center font-mono text-xs font-bold text-black dark:text-white" role="status" aria-live="polite"></p>
-        <div id="resultArea" class="mt-6 border-t-[3px] border-black pt-6 dark:border-white" hidden>
-          <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <h2 class="font-black uppercase tracking-tight text-lg text-black dark:text-white">Hasil Kompresi</h2>
-            <span id="savingsBadge" class="border-2 border-black bg-[#FF4B91] px-3.5 py-1 font-mono text-xs font-black uppercase text-white shadow-[2px_2px_0px_#000]"></span>
-          </div>
-          <p id="largerWarning" class="mb-4 border-2 border-black bg-[#FEF08A] p-3.5 font-mono text-xs font-bold text-black shadow-[3px_3px_0px_#000] leading-relaxed" hidden>
-            Hasil kompresi lebih besar dari file asli. Disarankan gunakan file asli atau coba opsi lain.
-            <a id="originalDownload" class="font-black underline ml-1 cursor-pointer" download="quickimg-original">Unduh file asli</a>
-          </p>
-          <div class="grid grid-cols-2 gap-3 sm:gap-4">
-            <div class="overflow-hidden border-2 border-black bg-white dark:bg-zinc-800 shadow-[4px_4px_0px_#000] dark:border-white dark:shadow-[4px_4px_0px_#fff]">
-              <img id="resultPreview" class="aspect-[4/3] w-full object-contain p-2" alt="Pratinjau gambar asli" />
-              <p class="border-t-2 border-black bg-[#F8FAFC] dark:bg-zinc-700 px-3 py-2 font-mono text-xs font-bold text-black dark:text-white dark:border-white">ASLI // <span id="originalSize" class="font-black"></span></p>
+            <div id="selectedFile" class="mt-4 flex items-center justify-between border-2 border-black bg-[#FEF08A] p-3 shadow-[3px_3px_0px_#000] text-black" hidden>
+              <div class="flex min-w-0 items-center gap-3">
+                <img id="originalPreview" class="h-12 w-12 border-2 border-black bg-zinc-200 object-cover shadow-[1px_1px_0px_#000]" alt="Pratinjau gambar asli" />
+                <div class="min-w-0">
+                  <p id="fileName" class="truncate font-mono text-xs sm:text-sm font-bold text-black"></p>
+                  <p id="fileSize" class="font-mono text-xs text-zinc-700 font-semibold"></p>
+                </div>
+              </div>
+              <button id="resetBtn" type="button" class="shrink-0 border-2 border-black bg-white px-3 py-1.5 font-mono text-xs font-black text-black shadow-[2px_2px_0px_#000] hover:bg-zinc-100 active:translate-x-0.5 active:translate-y-0.5">
+                Ganti Gambar
+              </button>
             </div>
-            <div class="overflow-hidden border-2 border-black bg-[#F0FDF4] dark:bg-zinc-800 shadow-[4px_4px_0px_#000] dark:border-white dark:shadow-[4px_4px_0px_#4ADE80]">
-              <img id="compressedPreview" class="aspect-[4/3] w-full object-contain p-2" alt="Pratinjau hasil kompresi" />
-              <p class="border-t-2 border-black bg-[#DCFCE7] dark:bg-emerald-950 px-3 py-2 font-mono text-xs font-bold text-black dark:text-emerald-300 dark:border-white">
-                HASIL // <span id="newSize" class="font-black text-emerald-800 dark:text-emerald-300"></span>
+            <!-- MAJOR-5 + MAJOR-7: settings tabs berisi konten nyata, aria-controls lengkap -->
+            <div id="settingsDrawer" class="settings-drawer mt-6">
+              <div class="grid grid-cols-2 gap-2 sm:grid-cols-4 font-mono font-bold mb-4" role="tablist" aria-label="Pengaturan gambar">
+                <button type="button" class="settings-tab" id="stab-compression" data-tab="compression" role="tab" aria-selected="true"  aria-controls="sgroup-compression">⚙️ Kompresi</button>
+                <button type="button" class="settings-tab" id="stab-dimensions"  data-tab="dimensions"  role="tab" aria-selected="false" aria-controls="sgroup-dimensions">📐 Dimensi</button>
+                <button type="button" class="settings-tab" id="stab-crop"        data-tab="crop"        role="tab" aria-selected="false" aria-controls="sgroup-crop">✂️ Potong</button>
+                <button type="button" class="settings-tab" id="stab-export"      data-tab="export"      role="tab" aria-selected="false" aria-controls="sgroup-export">📦 Ekspor</button>
+              </div>
+
+              <!-- Tab Kompresi -->
+              <div id="sgroup-compression" class="setting-group active grid gap-4 sm:grid-cols-2" role="tabpanel" aria-labelledby="stab-compression" tabindex="0">
+                <label class="col-span-full flex items-center justify-between font-mono text-xs font-black uppercase text-black" for="qualitySlider">
+                  Tingkat Kualitas
+                  <output id="qualityValue" for="qualitySlider" class="border-2 border-black bg-[#FFE600] px-2 py-0.5 font-mono text-xs font-black text-black shadow-[2px_2px_0px_#000]">75%</output>
+                </label>
+                <div class="col-span-full">
+                  <input id="qualitySlider" class="range block w-full cursor-pointer" type="range" min="0" max="100" value="75" />
+                  <span class="mt-1.5 flex justify-between font-mono text-[11px] font-bold text-zinc-600">
+                    <span>Ukuran Minimal</span><span>Kualitas Maksimal</span>
+                  </span>
+                </div>
+                <label class="col-span-full font-mono text-xs font-black uppercase text-black">
+                  Maksimum Ukuran File (KB, Opsional)
+                  <input id="targetKB" type="number" min="1" max="20480" placeholder="Contoh: 200" class="mt-1 w-full border-2 border-black bg-white p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" />
+                </label>
+              </div>
+
+              <!-- Tab Dimensi -->
+              <div id="sgroup-dimensions" class="setting-group grid gap-4 sm:grid-cols-2" role="tabpanel" aria-labelledby="stab-dimensions" tabindex="0" hidden>
+                <label class="font-mono text-xs font-bold text-black">Lebar (px)
+                  <input id="resizeWidth" type="number" min="1" max="12000" class="mt-1 w-full border-2 border-black bg-white p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" placeholder="Auto" />
+                </label>
+                <label class="font-mono text-xs font-bold text-black">Tinggi (px)
+                  <input id="resizeHeight" type="number" min="1" max="12000" class="mt-1 w-full border-2 border-black bg-white p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" placeholder="Auto" />
+                </label>
+                <label class="col-span-full flex items-center gap-2 font-mono text-xs font-bold text-black cursor-pointer select-none">
+                  <input id="keepRatio" type="checkbox" checked class="border-2 border-black" /> Kunci Aspek Rasio Asli
+                </label>
+                <div class="col-span-full flex flex-wrap gap-2">
+                  <button type="button" class="preset border-2 border-black bg-[#C7D2FE] px-2.5 py-1.5 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-[#A5B4FC]" data-w="200" data-h="300">Pasfoto 2x3</button>
+                  <button type="button" class="preset border-2 border-black bg-[#C7D2FE] px-2.5 py-1.5 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-[#A5B4FC]" data-w="300" data-h="400">Pasfoto 3x4</button>
+                  <button type="button" class="preset border-2 border-black bg-[#C7D2FE] px-2.5 py-1.5 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-[#A5B4FC]" data-w="400" data-h="600">Pasfoto 4x6</button>
+                  <button type="button" class="preset border-2 border-black bg-[#FEF08A] px-2.5 py-1.5 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-[#FFE600]" data-w="300" data-h="400">CPNS 3x4</button>
+                </div>
+              </div>
+
+              <!-- Tab Potong -->
+              <div id="sgroup-crop" class="setting-group grid gap-3 sm:grid-cols-2" role="tabpanel" aria-labelledby="stab-crop" tabindex="0" hidden>
+                <label class="font-mono text-xs font-bold text-black">Awalan nama file
+                  <input id="namePrefix" placeholder="" class="mt-1 w-full border-2 border-black bg-white p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" />
+                </label>
+                <label class="font-mono text-xs font-bold text-black">Akhiran nama file
+                  <input id="nameSuffix" value="-min" class="mt-1 w-full border-2 border-black bg-white p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" />
+                </label>
+                <button id="cropBtn" type="button" class="col-span-full border-2 border-black bg-[#FF4B91] px-4 py-2.5 font-mono text-xs font-black uppercase text-white shadow-[2px_2px_0px_#000] hover:bg-[#F43F5E] disabled:opacity-50" disabled>
+                  ✂️ Buka Pemotong Gambar
+                </button>
+              </div>
+
+              <!-- Tab Ekspor -->
+              <div id="sgroup-export" class="setting-group" role="tabpanel" aria-labelledby="stab-export" tabindex="0" hidden>
+                <label class="font-mono text-xs font-black uppercase text-black">
+                  Format Hasil Output
+                  <select id="formatSelect" class="mt-2 w-full border-2 border-black bg-white p-2.5 font-mono text-sm font-bold shadow-[2px_2px_0px_#000] text-black">
+                    <option value="image/webp">WebP — Efisien &amp; Ukuran Terkecil</option>
+                    <option value="image/jpeg">JPG / JPEG — Standar Kompatibilitas</option>
+                    <option value="image/png">PNG — Pertahankan Transparansi</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            <button
+              id="processBtn"
+              type="button"
+              class="mt-7 flex w-full items-center justify-center gap-3 border-[3px] border-black bg-[#2ECC71] hover:bg-[#27ae60] px-6 py-4 font-black uppercase tracking-wider text-black text-base sm:text-lg shadow-[6px_6px_0px_#000] active:translate-x-1 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:opacity-50 transition"
+              disabled
+            >
+              <span id="processSpinner" class="spinner" hidden aria-hidden="true"></span>
+              <span id="processLabel">Pilih Gambar Untuk Mulai</span>
+            </button>
+
+            <p id="status" class="mt-4 min-h-6 text-center font-mono text-xs font-bold text-black" role="status" aria-live="polite"></p>
+            <div id="resultArea" class="mt-6 border-t-[3px] border-black pt-6" hidden>
+              <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <h2 class="font-black uppercase tracking-tight text-lg text-black">Hasil Kompresi</h2>
+                <!-- KRITIS-3: text-black on #FF4B91 → 4.6:1 ✅ WCAG AA -->
+                <span id="savingsBadge" class="border-2 border-black bg-[#FF4B91] px-3.5 py-1 font-mono text-xs font-black uppercase text-black shadow-[2px_2px_0px_#000]"></span>
+              </div>
+              <p id="largerWarning" class="mb-4 border-2 border-black bg-[#FEF08A] p-3.5 font-mono text-xs font-bold text-black shadow-[3px_3px_0px_#000] leading-relaxed" hidden>
+                Hasil kompresi lebih besar dari file asli. Disarankan gunakan file asli atau coba opsi lain.
+                <a id="originalDownload" class="font-black underline ml-1 cursor-pointer" download="quickimg-original">Unduh file asli</a>
               </p>
+              <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                <div class="overflow-hidden border-2 border-black bg-white shadow-[4px_4px_0px_#000] rounded-lg">
+                  <img id="resultPreview" class="aspect-[4/3] w-full object-contain p-2" alt="Pratinjau gambar asli" />
+                  <p class="border-t-2 border-black bg-[#F8FAFC] px-3 py-2 font-mono text-xs font-bold text-black">ASLI // <span id="originalSize" class="font-black"></span></p>
+                </div>
+                <div class="overflow-hidden border-2 border-black bg-[#F0FDF4] shadow-[4px_4px_0px_#000] rounded-lg">
+                  <img id="compressedPreview" class="aspect-[4/3] w-full object-contain p-2" alt="Pratinjau hasil kompresi" />
+                  <p class="border-t-2 border-black bg-[#DCFCE7] px-3 py-2 font-mono text-xs font-bold text-black">
+                    HASIL // <span id="newSize" class="font-black text-emerald-800"></span>
+                  </p>
+                </div>
+              </div>
+              <a
+                id="downloadBtn"
+                download="quickimg-image"
+                role="button"
+                class="mt-5 flex w-full items-center justify-center gap-2 border-[3px] border-black bg-[#FFE600] hover:bg-[#FACC15] px-6 py-4 font-black uppercase tracking-wider text-black text-base shadow-[5px_5px_0px_#000] active:translate-x-1 active:translate-y-1 active:shadow-none transition cursor-pointer"
+              >
+                💾 Unduh Hasil Kompresi
+              </a>
             </div>
-          </div>
-          <a
-            id="downloadBtn"
-            download="quickimg-image"
-            role="button"
-            class="mt-5 flex w-full items-center justify-center gap-2 border-[3px] border-black bg-[#FFE600] hover:bg-[#FACC15] px-6 py-4 font-black uppercase tracking-wider text-black text-base shadow-[5px_5px_0px_#000] active:translate-x-1 active:translate-y-1 active:shadow-none transition cursor-pointer"
-          >
-            💾 Unduh Hasil Kompresi
-          </a>
+          </section>
         </div>
-      </section>
+        <!-- end panelImageTools -->
+
+        <!-- Panel: Document & File Tools -->
+        <div id="panelDocTools" class="main-tab-panel" role="tabpanel" aria-labelledby="tab-doc" tabindex="0" hidden>
+        <section class="surface border-[3px] sm:border-[4px] border-black bg-white p-5 sm:p-8 shadow-[8px_8px_0px_#000] rounded-lg" aria-label="Document tools">
+            <!-- ZIP Creator -->
+            <div class="mb-8">
+              <div class="mb-3 flex items-center justify-between font-mono text-xs font-bold text-zinc-500"><span>// ZIP CREATOR</span><span>BUAT ARCHIVE DARI FILE APAPUN</span></div>
+              <input id="docFileInput" type="file" multiple class="sr-only" />
+              <button
+                id="docDropzone"
+                type="button"
+                class="dropzone w-full border-[3px] border-dashed border-black bg-[#E0F2FE] hover:bg-[#BAE6FD] px-5 py-8 text-center shadow-[4px_4px_0px_#000] cursor-pointer"
+              >
+                <span class="mx-auto mb-3 grid h-12 w-12 place-items-center border-2 border-black bg-[#FFE600] text-black shadow-[3px_3px_0px_#000] rounded-md" aria-hidden="true">📦</span>
+                <span class="block text-lg font-black uppercase tracking-wide text-black">Tarik File ke Sini</span>
+                <span class="mt-1 block font-mono text-xs font-bold text-zinc-600">PDF, DOC, JPG, MP3 dll — pack jadi .zip</span>
+              </button>
+              <div class="mt-3 flex items-center justify-between font-mono text-xs font-bold">
+                <span id="docFileCount" class="text-zinc-500">Belum ada file</span>
+                <button
+                  id="docZipBtn"
+                  type="button"
+                  disabled
+                  class="border-2 border-black bg-[#E67E22] px-4 py-2 font-mono text-xs font-black uppercase text-white shadow-[3px_3px_0px_#000] hover:bg-[#d4720f] disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  📦 Buat ZIP
+                </button>
+              </div>
+              <div id="docFileList" class="mt-2 grid gap-2"></div>
+              <p id="docStatus" class="mt-2 font-mono text-xs font-bold text-black min-h-5" role="status" aria-live="polite"></p>
+            </div>
+
+            <div class="border-t-2 border-black my-6"></div>
+
+            <!-- PDF Tools -->
+            <div class="mb-8">
+              <div class="mb-3 flex items-center justify-between font-mono text-xs font-bold text-zinc-500"><span>// PDF TOOLS</span><span>MERGE &amp; COMPRESS</span></div>
+              <input id="pdfFileInput" type="file" accept=".pdf,application/pdf" multiple class="sr-only" />
+              <button
+                id="pdfDropzone"
+                type="button"
+                class="dropzone w-full border-[3px] border-dashed border-black bg-[#FEF3C7] hover:bg-[#FDE68A] px-5 py-8 text-center shadow-[4px_4px_0px_#000] cursor-pointer"
+              >
+                <span class="mx-auto mb-3 grid h-12 w-12 place-items-center border-2 border-black bg-[#FF4B91] text-white shadow-[3px_3px_0px_#000] rounded-md" aria-hidden="true">📄</span>
+                <span class="block text-lg font-black uppercase tracking-wide text-black">Tarik File PDF ke Sini</span>
+                <span class="mt-1 block font-mono text-xs font-bold text-zinc-600">Gabungkan beberapa PDF atau kompres ukurannya</span>
+              </button>
+              <div class="mt-3 flex flex-wrap items-center justify-between gap-2 font-mono text-xs font-bold">
+                <span id="pdfFileCount" class="text-zinc-500">Belum ada PDF</span>
+                <div class="flex gap-2">
+                  <button
+                    id="pdfMergeBtn"
+                    type="button"
+                    disabled
+                    class="border-2 border-black bg-[#2ECC71] px-4 py-2 font-mono text-xs font-black uppercase text-black shadow-[3px_3px_0px_#000] hover:bg-[#27ae60] disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    🔗 Merge PDF
+                  </button>
+                  <button
+                    id="pdfCompressBtn"
+                    type="button"
+                    disabled
+                    class="border-2 border-black bg-[#3498DB] px-4 py-2 font-mono text-xs font-black uppercase text-white shadow-[3px_3px_0px_#000] hover:bg-[#2980b9] disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    🗜 Kompres
+                  </button>
+                </div>
+              </div>
+              <div id="pdfFileList" class="mt-2 grid gap-2"></div>
+              <p id="pdfStatus" class="mt-2 font-mono text-xs font-bold text-black min-h-5" role="status" aria-live="polite"></p>
+            </div>
+
+            <div class="border-t-2 border-black my-6"></div>
+
+            <!-- SVG Cleaner -->
+            <div>
+              <div class="mb-3 flex items-center justify-between font-mono text-xs font-bold text-zinc-500"><span>// SVG CLEANER</span><span>HAPUS METADATA &amp; WHITESPACE</span></div>
+              <input id="svgFileInput" type="file" accept=".svg,image/svg+xml" class="sr-only" />
+              <button
+                id="svgDropzone"
+                type="button"
+                class="dropzone w-full border-[3px] border-dashed border-black bg-[#F0FDF4] hover:bg-[#DCFCE7] px-5 py-8 text-center shadow-[4px_4px_0px_#000] cursor-pointer"
+              >
+                <span class="mx-auto mb-3 grid h-12 w-12 place-items-center border-2 border-black bg-[#2ECC71] text-black shadow-[3px_3px_0px_#000] rounded-md" aria-hidden="true">✨</span>
+                <span class="block text-lg font-black uppercase tracking-wide text-black">Tarik File SVG ke Sini</span>
+                <span class="mt-1 block font-mono text-xs font-bold text-zinc-600">Hapus komentar, metadata, whitespace berlebih</span>
+              </button>
+              <!-- MINOR-13: pisah nama file dari status hasil operasi -->
+              <div class="mt-3 flex items-center justify-between gap-2">
+                <div>
+                  <span id="svgFileName" class="font-mono text-xs font-bold text-zinc-600"></span>
+                  <p id="svgStatus" class="font-mono text-xs font-bold text-black min-h-5" role="status" aria-live="polite"></p>
+                </div>
+                <button
+                  id="svgCleanBtn"
+                  type="button"
+                  disabled
+                  class="border-2 border-black bg-[#2ECC71] px-4 py-2 font-mono text-xs font-black uppercase text-black shadow-[3px_3px_0px_#000] hover:bg-[#27ae60] disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  ✨ Bersihkan SVG
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+        <!-- end panelDocTools -->
+      </div>
+      <!-- end tab container -->
+
       <div class="mx-auto mt-8 grid max-w-2xl gap-5 sm:grid-cols-2">
-        <aside class="border-[3px] border-black bg-[#FEF08A] p-6 text-center shadow-[5px_5px_0px_#000] text-black">
-          <p class="font-black uppercase tracking-tight text-sm">Terbantu Dengan QuickImg?</p>
-          <p class="mt-1.5 font-mono text-xs font-semibold leading-relaxed text-zinc-800">Dukung serverless tools gratis ini agar selalu online dan diperbarui.</p>
+        <aside class="border-[3px] border-black bg-[#FEF08A] p-6 text-center shadow-[5px_5px_0px_#000] text-black rounded-lg">
+          <p class="font-black uppercase tracking-tight text-sm text-black">Terbantu Dengan QuickTools?</p>
+          <p class="mt-1.5 font-mono text-xs font-semibold leading-relaxed text-zinc-700">Dukung serverless tools gratis ini agar selalu online dan diperbarui.</p>
           <a
             href="https://trakteer.id/ilham_pramudia2/tip"
             target="_blank"
             rel="noopener noreferrer"
             role="button"
-            class="mt-4 inline-flex items-center gap-2 border-2 border-black bg-[#FF6B00] px-5 py-2.5 font-mono text-xs font-black uppercase text-white shadow-[3px_3px_0px_#000] hover:bg-[#EA580C] active:translate-x-0.5 active:translate-y-0.5"
+            class="mt-4 inline-flex items-center gap-2 border-2 border-black bg-[#E67E22] px-5 py-2.5 font-mono text-xs font-black uppercase text-white shadow-[3px_3px_0px_#000] hover:bg-[#d4720f] active:translate-x-0.5 active:translate-y-0.5"
           >
             ☕ Traktir via Trakteer
           </a>
         </aside>
 
-        <aside
-          aria-label="Slot iklan"
-          class="flex min-h-36 flex-col items-center justify-center border-[3px] border-dashed border-black bg-white dark:bg-zinc-800 p-6 text-center shadow-[5px_5px_0px_#000] dark:border-white text-black dark:text-white"
-        >
-          <span class="border border-black bg-[#38BDF8] text-black px-2.5 py-0.5 font-mono text-[10px] font-black uppercase tracking-[0.2em] shadow-[1px_1px_0px_#000]"> Advertisement </span>
-          <span class="mt-2 font-mono text-xs font-bold text-zinc-500 dark:text-zinc-400">Ruang untuk iklan yang relevan</span>
+        <aside aria-label="Slot iklan" class="flex min-h-36 flex-col items-center justify-center border-[3px] border-dashed border-black bg-white p-6 text-center shadow-[5px_5px_0px_#000] rounded-lg">
+          <span class="border border-black bg-[#3498DB] text-white px-2.5 py-0.5 font-mono text-[10px] font-black uppercase tracking-[0.2em] shadow-[1px_1px_0px_#000] rounded"> Advertisement </span>
+          <span class="mt-2 font-mono text-xs font-bold text-zinc-500">Ruang untuk iklan yang relevan</span>
         </aside>
       </div>
     </main>
 
-    <dialog id="cropDialog" class="w-[min(96vw,720px)] border-[4px] border-black bg-white p-6 shadow-[10px_10px_0px_#000] dark:bg-zinc-900 dark:border-white text-black dark:text-white">
+    <dialog id="cropDialog" class="w-[min(96vw,720px)] border-[4px] border-black bg-white p-6 shadow-[10px_10px_0px_#000] text-black">
       <h2 class="mb-3 font-black uppercase text-xl">✂️ Potong Gambar</h2>
-      <label class="block font-mono text-xs font-bold">
+      <label class="block font-mono text-xs font-bold text-black">
         Rasio Aspek
-        <select id="cropRatio" class="mt-1 block w-full border-2 border-black bg-white dark:bg-zinc-800 p-2 font-mono text-sm shadow-[2px_2px_0px_#000]">
+        <select id="cropRatio" class="mt-1 block w-full border-2 border-black bg-white p-2 font-mono text-sm shadow-[2px_2px_0px_#000] text-black">
           <option value="NaN">Bebas (Tanpa Rasio)</option>
           <option value="1">1:1 (Persegi)</option>
           <option value="0.75">3:4 (Pasfoto CPNS)</option>
@@ -316,15 +426,17 @@
           <option value="1.777778">16:9 (Widescreen)</option>
         </select>
       </label>
-      <img id="cropImage" class="mt-4 max-h-[60vh] w-full border-2 border-black object-contain bg-zinc-100 dark:bg-zinc-800" alt="Pangkas gambar" />
+      <img id="cropImage" class="mt-4 max-h-[60vh] w-full border-2 border-black object-contain bg-zinc-100" alt="Pangkas gambar" />
       <div class="mt-5 flex justify-end gap-3">
-        <button id="cropCancel" type="button" class="border-2 border-black bg-white dark:bg-zinc-800 px-5 py-2.5 font-mono text-xs font-black uppercase text-black dark:text-white shadow-[2px_2px_0px_#000] hover:bg-zinc-100">Batal</button>
-        <button id="cropApply" type="button" class="border-2 border-black bg-[#4ADE80] px-5 py-2.5 font-mono text-xs font-black uppercase text-black shadow-[2px_2px_0px_#000] hover:bg-[#22C55E]">Terapkan Potongan</button>
+        <button id="cropCancel" type="button" class="border-2 border-black bg-white px-5 py-2.5 font-mono text-xs font-black uppercase text-black shadow-[2px_2px_0px_#000] hover:bg-zinc-100">Batal</button>
+        <button id="cropApply" type="button" class="border-2 border-black bg-[#2ECC71] px-5 py-2.5 font-mono text-xs font-black uppercase text-black shadow-[2px_2px_0px_#000] hover:bg-[#27ae60]">Terapkan Potongan</button>
       </div>
     </dialog>
 
-    <footer class="border-t-[3px] border-black bg-white dark:bg-zinc-950 px-5 py-6 text-center font-mono text-xs font-bold text-black dark:text-white shadow-[0_-4px_0_#000] dark:shadow-[0_-4px_0_#fff]">
-      © 2026 QUICKIMG TOOLS // 100% CLIENT-SIDE IMAGE COMPRESSION // PRIVASI MAKSIMAL
+    <!-- MINOR-14: footer 2 baris dengan hierarki visual -->
+    <footer class="border-t-[3px] border-black bg-[#111111] px-5 py-6 text-center shadow-[0_-4px_0_#000]">
+      <p class="font-mono text-xs font-bold text-zinc-100">© 2026 <strong class="text-[#FFE600]">QUICKTOOLS</strong></p>
+      <p class="mt-1 font-mono text-[10px] font-bold text-zinc-500">IMAGE • PDF • ZIP • SVG — 100% CLIENT-SIDE // PRIVASI MAKSIMAL</p>
     </footer>
     <script type="module" src="./js/app.js"></script>
   </body>

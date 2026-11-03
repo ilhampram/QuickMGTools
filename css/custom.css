@@ -2,13 +2,14 @@
 
 :root {
   --neo-black: #000000;
-  --neo-bg: #fffdf5;
-  --neo-yellow: #ffe600;
+  --neo-bg: #F5F5F0;
+  --neo-yellow: #FFE600;
   --neo-pink: #ff4b91;
-  --neo-green: #4ade80;
-  --neo-cyan: #38bdf8;
-  --neo-orange: #ff6b00;
+  --neo-green: #2ECC71;
+  --neo-cyan: #3498DB;
+  --neo-orange: #E67E22;
   --neo-shadow: 4px 4px 0px #000000;
+  --neo-radius: 6px;
 }
 
 html {
@@ -18,22 +19,16 @@ html {
 
 body {
   background-color: var(--neo-bg);
-  background-image: radial-gradient(#000000 1.2px, transparent 1.2px);
-  background-size: 20px 20px;
+  background-image: radial-gradient(#00000015 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
   color: #000000;
   min-height: 100vh;
 }
 
-html.dark body {
-  background-color: #121214;
-  background-image: radial-gradient(#ffffff 1.2px, transparent 1.2px);
-  color: #ffffff;
-}
-
 button, input, select, textarea, dialog, kbd,
 .surface, .control-panel, .dropzone, .settings-tab,
-.batch-item, aside, header, footer, .toast, .preset {
-  border-radius: 0 !important;
+.batch-item, aside, header, footer, .toast, .preset, fieldset {
+  border-radius: var(--neo-radius) !important;
 }
 
 input[type="text"], input[type="number"], select, textarea {
@@ -48,13 +43,6 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
   box-shadow: 4px 4px 0px #000000 !important;
 }
 
-html.dark input[type="text"], html.dark input[type="number"], html.dark select {
-  background-color: #1f1f23 !important;
-  color: #ffffff !important;
-  border-color: #ffffff !important;
-  box-shadow: 2px 2px 0px #ffffff !important;
-}
-
 /* Neo Range Slider */
 input[type="range"].range {
   -webkit-appearance: none;
@@ -64,13 +52,8 @@ input[type="range"].range {
   background: #ffffff;
   border: 2px solid #000000;
   box-shadow: 2px 2px 0px #000000;
+  border-radius: 4px !important;
   outline: none;
-}
-
-html.dark input[type="range"].range {
-  background: #27272a;
-  border-color: #ffffff;
-  box-shadow: 2px 2px 0px #ffffff;
 }
 
 input[type="range"].range::-webkit-slider-thumb {
@@ -80,7 +63,7 @@ input[type="range"].range::-webkit-slider-thumb {
   background: var(--neo-yellow);
   border: 2px solid #000000;
   cursor: pointer;
-  border-radius: 0 !important;
+  border-radius: 4px !important;
   box-shadow: 1px 1px 0px #000000;
 }
 
@@ -90,7 +73,7 @@ input[type="range"].range::-moz-range-thumb {
   background: var(--neo-yellow);
   border: 2px solid #000000;
   cursor: pointer;
-  border-radius: 0 !important;
+  border-radius: 4px !important;
 }
 
 /* Checkbox */
@@ -99,13 +82,11 @@ input[type="checkbox"] {
   width: 18px;
   height: 18px;
   border: 2px solid #000000 !important;
-  border-radius: 0 !important;
+  border-radius: 4px !important;
   cursor: pointer;
 }
 
-/* =========================================
-   3. Buttons & Tactile Click Physics
-   ========================================= */
+/* Buttons & Click Physics */
 button,
 a[role="button"],
 .preset,
@@ -114,10 +95,9 @@ a[role="button"],
 #processBtn,
 #cropBtn,
 #cropApply,
-#cropCancel,
-#themeToggle {
+#cropCancel {
   border: 2px solid #000000 !important;
-  border-radius: 0 !important;
+  border-radius: var(--neo-radius) !important;
   box-shadow: var(--neo-shadow) !important;
   font-family: 'Space Grotesk', sans-serif !important;
   font-weight: 800 !important;
@@ -153,55 +133,29 @@ button:disabled {
   box-shadow: 2px 2px 0px #000000 !important;
 }
 
-html.dark button:not(:disabled):active,
-html.dark #downloadBtn:active {
-  box-shadow: 0px 0px 0px #ffffff !important;
-}
-
-html.dark button,
-html.dark .preset,
-html.dark dialog,
-html.dark .surface,
-html.dark .dropzone,
-html.dark header,
-html.dark aside,
-html.dark .batch-item {
-  border-color: #ffffff !important;
-}
-
-/* =========================================
-   4. Dropzone Neo Style
-   ========================================= */
+/* Dropzone Style */
 .dropzone {
   border: 3px dashed #000000 !important;
-  background-color: #e0f2fe;
   box-shadow: var(--neo-shadow);
+  border-radius: var(--neo-radius) !important;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
-.dropzone:hover,
-.dropzone.dragover {
-  background-color: #bbf7d0;
+.dropzone:hover {
   border-style: solid !important;
   transform: translate(-2px, -2px);
   box-shadow: 6px 6px 0px #000000;
 }
 
-html.dark .dropzone {
-  background-color: #1e293b;
-  border-color: #ffffff !important;
-  box-shadow: 4px 4px 0px #ffffff;
+/* MAJOR-8: dragover flash kuning untuk signal visual yang jelas */
+.dropzone.dragover {
+  background-color: #FFE600 !important;
+  border-style: solid !important;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #000000;
 }
 
-html.dark .dropzone:hover,
-html.dark .dropzone.dragover {
-  background-color: #064e3b;
-  box-shadow: 6px 6px 0px #ffffff;
-}
-
-/* =========================================
-   5. Settings Tabs & Groups
-   ========================================= */
+/* Settings Tabs */
 .settings-tab {
   border: 2px solid #000000;
   padding: 0.65rem 0.75rem;
@@ -216,10 +170,11 @@ html.dark .dropzone.dragover {
   transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
 }
 
+/* KRITIS-3: hover bg lebih gelap agar text-black ≥ 4.5:1 */
 .settings-tab:hover {
   transform: translate(-1px, -1px);
   box-shadow: 3px 3px 0px #000000;
-  background-color: #fef08a;
+  background-color: #FFE600; /* kuning penuh → black on #FFE600 = 14.7:1 ✅ */
 }
 
 .settings-tab[aria-selected="true"] {
@@ -227,20 +182,6 @@ html.dark .dropzone.dragover {
   color: #000000 !important;
   box-shadow: 4px 4px 0px #000000 !important;
   transform: translate(-2px, -2px) !important;
-}
-
-html.dark .settings-tab {
-  background: #27272a;
-  border-color: #ffffff;
-  color: #ffffff;
-  box-shadow: 2px 2px 0px #ffffff;
-}
-
-html.dark .settings-tab[aria-selected="true"] {
-  background: var(--neo-yellow) !important;
-  color: #000000 !important;
-  border-color: #ffffff;
-  box-shadow: 4px 4px 0px #ffffff !important;
 }
 
 .setting-group {
@@ -251,9 +192,7 @@ html.dark .settings-tab[aria-selected="true"] {
   display: block;
 }
 
-/* =========================================
-   6. Toast, Progress & Spinner
-   ========================================= */
+/* Toast & Spinner */
 .toast {
   position: fixed;
   z-index: 60;
@@ -263,6 +202,7 @@ html.dark .settings-tab[aria-selected="true"] {
   opacity: 0;
   pointer-events: none;
   border: 3px solid #000000 !important;
+  border-radius: var(--neo-radius) !important;
   background: var(--neo-yellow);
   color: #000000;
   font-family: 'JetBrains Mono', monospace;
@@ -278,47 +218,13 @@ html.dark .settings-tab[aria-selected="true"] {
   transform: translate(-50%, 0);
 }
 
-.progress-track {
-  height: 12px;
-  border: 2px solid #000000;
-  background: #ffffff;
-  overflow: hidden;
-  box-shadow: 2px 2px 0px #000000;
-}
-
-.progress-track::after {
-  content: "";
-  display: block;
-  height: 100%;
-  width: 45%;
-  background: repeating-linear-gradient(
-    45deg,
-    var(--neo-yellow),
-    var(--neo-yellow) 10px,
-    #000000 10px,
-    #000000 20px
-  );
-  animation: progress 1.2s linear infinite alternate;
-}
-
-html.dark .progress-track {
-  border-color: #ffffff;
-  background: #18181b;
-  box-shadow: 2px 2px 0px #ffffff;
-}
-
-@keyframes progress {
-  to {
-    transform: translateX(130%);
-  }
-}
-
 .spinner {
   display: inline-block;
   width: 18px;
   height: 18px;
   border: 3px solid #000000;
   border-top-color: transparent;
+  border-radius: 50% !important;
   animation: spin 0.6s linear infinite;
 }
 
@@ -332,32 +238,55 @@ html.dark .progress-track {
   display: none !important;
 }
 
-/* =========================================
-   7. Dialog & Backdrop
-   ========================================= */
+/* Dialog */
 dialog {
   border: 4px solid #000000 !important;
+  border-radius: 8px !important;
   box-shadow: 10px 10px 0px #000000 !important;
 }
 
 dialog::backdrop {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.65);
 }
 
-html.dark dialog {
-  border-color: #ffffff !important;
-  box-shadow: 10px 10px 0px #ffffff !important;
-  background-color: #18181b !important;
-  color: #ffffff !important;
+/* Main Tab Navigation */
+.main-tab-btn {
+  border: 2px solid #000000 !important;
+  border-bottom: 2px solid #000000 !important;
+  background: #e2e8f0;
+  color: #000000;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: 0.78rem;
+  padding: 0.6rem 1.25rem;
+  cursor: pointer;
+  position: relative;
+  bottom: -2px;
+  box-shadow: none !important;
+  border-radius: var(--neo-radius) var(--neo-radius) 0 0 !important;
+  transition: background 0.1s ease;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-@media (max-width: 640px) {
-  .settings-drawer {
-    bottom: 0.75rem;
-    max-height: min(56vh, 420px);
-    overflow: auto;
-    overscroll-behavior: contain;
-  }
+.main-tab-btn:hover:not(.main-tab-active) {
+  background: #fef08a;
+  transform: none !important;
+}
+
+.main-tab-btn.main-tab-active {
+  background: #ffffff;
+  color: #000000;
+  border-bottom: 2px solid #ffffff !important;
+  z-index: 1;
+}
+
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid #000000;
+  margin-bottom: 0;
+  padding-top: 1rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

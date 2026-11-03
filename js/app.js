@@ -4,6 +4,7 @@ import { initResize } from "./modules/resize.js";
 import { initCrop } from "./modules/crop.js";
 import { createBatchQueue } from "./modules/batch.js";
 import { initPaste } from "./modules/paste.js";
+import { initZipCreator, initPdfTools, initSvgCleaner } from "./modules/doctools.js";
 let selected = null,
   originalUrl = "",
   resultUrl = "";
@@ -12,28 +13,33 @@ function render(items) {
   area.replaceChildren();
   items.forEach((item, index) => {
     const row = document.createElement("div");
-    row.className = "batch-item flex items-center justify-between gap-3 border-2 border-black bg-white p-3 text-sm shadow-[3px_3px_0px_#000] dark:bg-zinc-900 dark:border-white dark:shadow-[3px_3px_0px_#fff]";
+    row.className = "batch-item flex items-center justify-between gap-3 border-2 border-black bg-white p-3 text-sm shadow-[3px_3px_0px_#000] rounded-md";
     row.dataset.index = index;
     const info = document.createElement("div"),
       name = document.createElement("p"),
       detail = document.createElement("p");
     info.className = "min-w-0";
-    name.className = "truncate font-mono font-bold text-xs sm:text-sm text-black dark:text-white";
+    name.className = "truncate font-mono font-bold text-xs sm:text-sm text-black";
     name.textContent = item.file.name;
-    detail.className = "font-mono text-xs text-zinc-600 dark:text-zinc-400";
+    // KRITIS-3: zinc-600 on white → 5.8:1 ✅ WCAG AA
+    detail.className = "font-mono text-xs text-zinc-600";
     detail.textContent = `${formatSize(item.file.size)} • ${item.state}${item.result ? ` • hasil ${formatSize(item.result.size)}` : ""}`;
     info.append(name, detail);
-    const remove = document.createElement("button");
-    remove.type = "button";
-    remove.className = "item-action border-2 border-black bg-[#FFE600] px-3 py-1 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-[#fde047] active:translate-x-0.5 active:translate-y-0.5";
-    remove.textContent = item.result ? "Unduh" : "Pilih";
-    remove.setAttribute("aria-label", `Hapus ${item.file.name}`);
-    remove.onclick = () => {
-      if (remove.classList.contains("item-action") && item.result) {
-        download(item.result, outputName(item.file, item.result.type));
-        return;
-      }
-      if (remove.classList.contains("item-action") && !item.result) {
+    // KRITIS-1: aria-label akurat per state | KRITIS-2: pisah tombol aksi & hapus
+    const actions = document.createElement("div");
+    actions.className = "flex items-center gap-1.5 shrink-0";
+
+    const actionBtn = document.createElement("button");
+    actionBtn.type = "button";
+    actionBtn.className = "item-action border-2 border-black bg-[#FFE600] px-3 py-1 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-[#fde047] active:translate-x-0.5 active:translate-y-0.5 rounded";
+    if (item.result) {
+      actionBtn.textContent = "⬇ Unduh";
+      actionBtn.setAttribute("aria-label", `Unduh hasil ${item.file.name}`);
+      actionBtn.onclick = () => download(item.result, outputName(item.file, item.result.type));
+    } else {
+      actionBtn.textContent = "👁 Preview";
+      actionBtn.setAttribute("aria-label", `Preview ${item.file.name}`);
+      actionBtn.onclick = () => {
         selected = item;
         if (originalUrl) URL.revokeObjectURL(originalUrl);
         originalUrl = URL.createObjectURL(item.file);
@@ -43,44 +49,31 @@ function render(items) {
         byId("originalPreview").src = originalUrl;
         byId("resultArea").hidden = true;
         render(queue.items);
-        return;
-      }
+      };
+    }
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "border-2 border-black bg-white px-2.5 py-1 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-red-100 active:translate-x-0.5 active:translate-y-0.5 rounded";
+    removeBtn.textContent = "✕";
+    removeBtn.setAttribute("aria-label", `Hapus ${item.file.name} dari antrian`);
+    removeBtn.onclick = () => {
       queue.items.splice(index, 1);
       if (selected === item) selected = null;
       render(queue.items);
     };
-    row.append(info, remove);
+
+    actions.append(actionBtn, removeBtn);
+    row.append(info, actions);
     area.append(row);
   });
   byId("processBtn").disabled = !items.some((x) => !x.result) || items.some((x) => x.state === "Memproses");
   byId("zipBtn").disabled = !items.length || items.some((x) => !x.result);
   byId("cropBtn").disabled = !selected;
   byId("batchCount").textContent = items.length ? `${items.length} gambar · ${items.filter((item) => item.result).length} selesai` : "Tambahkan gambar untuk mulai";
-  byId("processLabel").textContent = items.some((x) => !x.result) ? "Proses gambar" : "Selesai diproses";
+  byId("processLabel").textContent = items.some((x) => !x.result) ? "Proses Gambar" : "✅ Selesai Diproses";
   const progress = byId("status").querySelector(".progress-track");
   if (progress) progress.setAttribute("aria-label", `Proses ${items.filter((item) => item.result).length} dari ${items.length}`);
-  area.querySelectorAll(".batch-item").forEach((row) => {
-    const item = items[Number(row.dataset.index)];
-    if (!item) return;
-    const action = row.querySelector(".item-action");
-    if (item.result) {
-      action.textContent = "Unduh";
-      action.setAttribute("aria-label", `Unduh ${item.file.name}`);
-      action.onclick = () => download(item.result, outputName(item.file, item.result.type));
-    } else {
-      action.textContent = "Pilih";
-      action.setAttribute("aria-label", `Pilih ${item.file.name}`);
-      action.onclick = () => {
-        selected = item;
-        byId("selectedFile").hidden = false;
-        byId("fileName").textContent = item.file.name;
-        byId("fileSize").textContent = formatSize(item.file.size);
-        byId("originalPreview").src = URL.createObjectURL(item.file);
-        byId("resultArea").hidden = true;
-        render(queue.items);
-      };
-    }
-  });
 }
 function showResult(item) {
   selected = item;
@@ -121,37 +114,24 @@ function toast(message) {
   clearTimeout(toast.timer);
   toast.timer = setTimeout(() => node.classList.remove("visible"), 2600);
 }
-const groups = Object.fromEntries([...document.querySelectorAll(".setting-group")].map((group) => [group.dataset.group, group]));
-groups.compression.append(byId("qualitySlider").parentElement, byId("targetKB").closest("label"));
-groups.dimensions.append(document.querySelectorAll(".control-drawer fieldset")[0]);
-groups.crop.append(byId("cropBtn"));
-groups.export.append(byId("formatSelect").closest("label"), byId("namePrefix").closest("label").parentElement);
+// MAJOR-5 + MAJOR-7: Tab settings — konten sudah inline di HTML, cukup toggle visibility + aria
 document.querySelectorAll(".settings-tab").forEach((tab) =>
   tab.addEventListener("click", () => {
-    document.querySelectorAll(".settings-tab").forEach((button) => button.setAttribute("aria-selected", String(button === tab)));
-    document.querySelectorAll(".setting-group").forEach((group) => group.classList.toggle("active", group.dataset.group === tab.dataset.tab));
+    document.querySelectorAll(".settings-tab").forEach((btn) => btn.setAttribute("aria-selected", String(btn === tab)));
+    document.querySelectorAll(".setting-group").forEach((panel) => {
+      const match = panel.id === `sgroup-${tab.dataset.tab}`;
+      panel.classList.toggle("active", match);
+      panel.hidden = !match;
+    });
   }),
 );
-document.querySelector('.settings-tab[data-tab="compression"]').click();
-const mobileQuery = matchMedia("(max-width: 640px)");
-function setMobileDrawer() {
-  document.querySelectorAll(".setting-group").forEach((group) => (group.hidden = mobileQuery.matches && !group.classList.contains("active")));
-}
-setMobileDrawer();
-mobileQuery.addEventListener?.("change", setMobileDrawer);
-document.querySelectorAll(".settings-tab").forEach((tab) => tab.addEventListener("click", setMobileDrawer));
-const themeToggle = byId("themeToggle");
-function updateThemeToggle() {
-  const dark = document.documentElement.classList.contains("dark");
-  themeToggle.setAttribute("aria-label", dark ? "Aktifkan mode terang" : "Aktifkan mode gelap");
-  themeToggle.title = dark ? "Aktifkan mode terang" : "Aktifkan mode gelap";
-  themeToggle.querySelector("span").textContent = dark ? "☀" : "☾";
-}
-updateThemeToggle();
-themeToggle.addEventListener("click", () => {
-  const dark = document.documentElement.classList.toggle("dark");
-  localStorage.setItem("quickimg-theme", dark ? "dark" : "light");
-  updateThemeToggle();
+// Arrow key navigation pada tablist (WAI-ARIA pattern)
+document.querySelector('[role="tablist"][aria-label="Pengaturan gambar"]')?.addEventListener("keydown", (e) => {
+  const tabs = [...document.querySelectorAll(".settings-tab")];
+  const idx = tabs.indexOf(document.activeElement);
+  if (idx === -1) return;
+  if (e.key === "ArrowRight") { e.preventDefault(); tabs[(idx + 1) % tabs.length].focus(); tabs[(idx + 1) % tabs.length].click(); }
+  if (e.key === "ArrowLeft")  { e.preventDefault(); tabs[(idx - 1 + tabs.length) % tabs.length].focus(); tabs[(idx - 1 + tabs.length) % tabs.length].click(); }
 });
 function accept(files) {
   const before = queue.items.length;
@@ -177,6 +157,10 @@ dropzone.addEventListener("drop", (e) => {
   accept([...e.dataTransfer.files]);
 });
 byId("processBtn").addEventListener("click", async () => {
+  // MAJOR-6: feedback label saat proses berjalan
+  const label = byId("processLabel");
+  label.textContent = "⏳ Memproses…";
+  byId("processBtn").disabled = true;
   byId("processSpinner").hidden = false;
   byId("status").innerHTML = '<span class="progress-track mb-2 block"></span>Memproses gambar langsung di perangkat…';
   try {
@@ -185,6 +169,7 @@ byId("processBtn").addEventListener("click", async () => {
     toast("Kompresi selesai!");
   } finally {
     byId("processSpinner").hidden = true;
+    render(queue.items); // restore label via render()
   }
 });
 byId("zipBtn").addEventListener("click", () => queue.zip().catch((error) => (byId("status").textContent = error.message)));
@@ -206,7 +191,24 @@ initPaste((files) => {
   toast("Gambar ditempel dari clipboard!");
 });
 byId("qualitySlider").addEventListener("input", (e) => (byId("qualityValue").value = `${e.target.value}%`));
+// MINOR-12: Konfirmasi dua-langkah — klik pertama ganti label, klik kedua eksekusi
+let resetPending = false, resetTimer;
 byId("resetBtn").addEventListener("click", () => {
+  if (!resetPending) {
+    resetPending = true;
+    byId("resetBtn").textContent = "Yakin Reset?";
+    byId("resetBtn").classList.add("bg-red-100");
+    resetTimer = setTimeout(() => {
+      resetPending = false;
+      byId("resetBtn").textContent = "Ganti Gambar";
+      byId("resetBtn").classList.remove("bg-red-100");
+    }, 3000);
+    return;
+  }
+  clearTimeout(resetTimer);
+  resetPending = false;
+  byId("resetBtn").textContent = "Ganti Gambar";
+  byId("resetBtn").classList.remove("bg-red-100");
   if (originalUrl) URL.revokeObjectURL(originalUrl);
   if (resultUrl) URL.revokeObjectURL(resultUrl);
   originalUrl = "";
@@ -218,4 +220,30 @@ byId("resetBtn").addEventListener("click", () => {
   byId("status").textContent = "Pilih gambar baru untuk memulai.";
   render(queue.items);
 });
+
+// MAJOR-7: Tab Navigation dengan arrow key support
+const tabBtns = document.querySelectorAll(".main-tab-btn");
+const tabPanels = document.querySelectorAll(".main-tab-panel");
+tabBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    tabBtns.forEach((b) => { b.setAttribute("aria-selected", "false"); b.classList.remove("main-tab-active"); });
+    tabPanels.forEach((p) => p.hidden = true);
+    btn.setAttribute("aria-selected", "true");
+    btn.classList.add("main-tab-active");
+    byId(btn.getAttribute("aria-controls")).hidden = false;
+  });
+});
+document.querySelector('[aria-label="Pilih kategori alat"]')?.addEventListener("keydown", (e) => {
+  const btns = [...tabBtns];
+  const idx = btns.indexOf(document.activeElement);
+  if (idx === -1) return;
+  if (e.key === "ArrowRight") { e.preventDefault(); btns[(idx + 1) % btns.length].focus(); btns[(idx + 1) % btns.length].click(); }
+  if (e.key === "ArrowLeft")  { e.preventDefault(); btns[(idx - 1 + btns.length) % btns.length].focus(); btns[(idx - 1 + btns.length) % btns.length].click(); }
+});
+
+// Init doc tools
+initZipCreator();
+initPdfTools();
+initSvgCleaner();
+
 if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("./sw.js").catch(() => {});
