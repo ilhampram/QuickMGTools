@@ -1,4 +1,4 @@
-const CACHE = "quickimg-v2";
+const CACHE = "quicktools-v1";
 const CORE = [
   "./",
   "./index.html",
@@ -13,6 +13,7 @@ const CORE = [
   "./js/modules/crop.js",
   "./js/modules/batch.js",
   "./js/modules/paste.js",
+  "./js/modules/doctools.js",
   "./js/utils/helpers.js",
 ];
 self.addEventListener("install", (event) =>
