@@ -4,7 +4,7 @@
 
 QuickMGTools adalah aplikasi berbasis web yang dirancang untuk mengompresi dan mengonversi format gambar secara instan langsung di browser pengguna. Tanpa perlu *upload* ke server pihak ketiga, proses kompresi dan konversi berjalan 100% di sisi klien (*client-side*), menjaga privasi dan keamanan data secara penuh.
 
-![QuickMGTools Banner](https://via.placeholder.com/1200x600?text=QuickMGTools+Preview+Image) <!-- Ganti URL ini dengan screenshot/GIF asli aplikasi -->
+![QuickMGTools Banner]("C:\laragon\www\www.quickmgtools.web.id_.png") <!-- Ganti URL ini dengan screenshot/GIF asli aplikasi -->
 
 ---
 
