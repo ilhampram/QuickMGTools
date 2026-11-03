@@ -18,10 +18,12 @@ export function createBatchQueue({ compress, render, onResult }) {
       }
       render(items);
     },
-    async process() {
+    async process(onProgress) {
+      const total = items.length;
       for (const item of items) {
         if (item.result) continue;
         item.state = "Memproses";
+        if (onProgress) onProgress(items.filter((x) => x.result).length, total, item);
         render(items);
         try {
           item.result = await compress(item.file);
@@ -29,6 +31,7 @@ export function createBatchQueue({ compress, render, onResult }) {
         } catch (error) {
           item.state = `Gagal: ${error.message}`;
         }
+        if (onProgress) onProgress(items.filter((x) => x.result).length, total, item);
         render(items);
       }
       const first = items.find((x) => x.result);

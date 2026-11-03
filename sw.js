@@ -1,4 +1,5 @@
-const CACHE = "quicktools-v1";
+const CACHE = "quicktools-v2";
+// ponytail: cache-first with network fallback for local core bundle. Ceiling: manual list in CORE; upgrade path: workbox or glob manifest if asset count grows.
 const CORE = [
   "./",
   "./index.html",
@@ -7,6 +8,12 @@ const CORE = [
   "./favicon.svg",
   "./favicon-48x48.png",
   "./css/custom.css",
+  "./css/tailwind.css",
+  "./vendor/cropper.min.css",
+  "./vendor/browser-image-compression.js",
+  "./vendor/jszip.min.js",
+  "./vendor/pdf-lib.min.js",
+  "./vendor/cropper.min.js",
   "./js/app.js",
   "./js/modules/compress.js",
   "./js/modules/resize.js",

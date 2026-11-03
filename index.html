@@ -38,39 +38,26 @@
       }
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Space+Grotesk:wght@500;700;900&display=swap" rel="stylesheet" />
-    <script>
-      tailwind = {
-        config: {
-          theme: {
-            extend: {
-              fontFamily: {
-                sans: ['"Space Grotesk"', "system-ui", "sans-serif"],
-                mono: ['"JetBrains Mono"', "monospace"],
-              },
-            },
-          },
-        },
-      };
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Space+Grotesk:wght@500;700;900&display=swap" rel="stylesheet" crossorigin="anonymous" />
+    <link rel="stylesheet" href="./css/tailwind.css" />
+    <link rel="stylesheet" href="./vendor/cropper.min.css" />
+    <script src="./vendor/browser-image-compression.js"></script>
+    <script src="./vendor/jszip.min.js"></script>
+    <script src="./vendor/pdf-lib.min.js"></script>
+    <script src="./vendor/cropper.min.js"></script>
     <link rel="manifest" href="./manifest.json" />
     <link rel="stylesheet" href="./css/custom.css" />
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1433901821024724"
-         crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1433901821024724" crossorigin="anonymous"></script>
   </head>
   <body class="min-h-screen text-black antialiased flex flex-col selection:bg-[#FFE600] selection:text-black">
     <header class="sticky top-0 z-30 border-b-[3px] border-black bg-[#111111] shadow-[0_4px_0_#000]">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
         <a href="#" class="flex items-center gap-3 group" aria-label="QuickImg Tools beranda">
           <!-- MAJOR-4: shadow hitam agar depth neubrutalism terlihat -->
-          <div class="h-10 w-10 border-2 border-black bg-[#FFE600] flex items-center justify-center font-black text-xl shadow-[3px_3px_0px_#000000] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-black rounded-md">
+          <div
+            class="h-10 w-10 border-2 border-black bg-[#FFE600] flex items-center justify-center font-black text-xl shadow-[3px_3px_0px_#000000] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-black rounded-md"
+          >
             Q
           </div>
           <div>
@@ -101,8 +88,8 @@
       <!-- MAJOR-7: aria-controls + aria-labelledby lengkap untuk WAI-ARIA tabs -->
       <div class="mx-auto max-w-4xl">
         <div class="tab-bar" role="tablist" aria-label="Pilih kategori alat">
-          <button class="main-tab-btn main-tab-active" id="tab-image" role="tab" aria-selected="true"  aria-controls="panelImageTools">🖼 Image Tools</button>
-          <button class="main-tab-btn"                 id="tab-doc"   role="tab" aria-selected="false" aria-controls="panelDocTools">📄 Document &amp; File Tools</button>
+          <button class="main-tab-btn main-tab-active" id="tab-image" role="tab" aria-selected="true" aria-controls="panelImageTools">🖼 Image Tools</button>
+          <button class="main-tab-btn" id="tab-doc" role="tab" aria-selected="false" aria-controls="panelDocTools">📄 Document &amp; File Tools</button>
         </div>
 
         <!-- Panel: Image Tools -->
@@ -171,10 +158,10 @@
             <!-- MAJOR-5 + MAJOR-7: settings tabs berisi konten nyata, aria-controls lengkap -->
             <div id="settingsDrawer" class="settings-drawer mt-6">
               <div class="grid grid-cols-2 gap-2 sm:grid-cols-4 font-mono font-bold mb-4" role="tablist" aria-label="Pengaturan gambar">
-                <button type="button" class="settings-tab" id="stab-compression" data-tab="compression" role="tab" aria-selected="true"  aria-controls="sgroup-compression">⚙️ Kompresi</button>
-                <button type="button" class="settings-tab" id="stab-dimensions"  data-tab="dimensions"  role="tab" aria-selected="false" aria-controls="sgroup-dimensions">📐 Dimensi</button>
-                <button type="button" class="settings-tab" id="stab-crop"        data-tab="crop"        role="tab" aria-selected="false" aria-controls="sgroup-crop">✂️ Potong</button>
-                <button type="button" class="settings-tab" id="stab-export"      data-tab="export"      role="tab" aria-selected="false" aria-controls="sgroup-export">📦 Ekspor</button>
+                <button type="button" class="settings-tab" id="stab-compression" data-tab="compression" role="tab" aria-selected="true" aria-controls="sgroup-compression">⚙️ Kompresi</button>
+                <button type="button" class="settings-tab" id="stab-dimensions" data-tab="dimensions" role="tab" aria-selected="false" aria-controls="sgroup-dimensions">📐 Dimensi</button>
+                <button type="button" class="settings-tab" id="stab-crop" data-tab="crop" role="tab" aria-selected="false" aria-controls="sgroup-crop">✂️ Potong</button>
+                <button type="button" class="settings-tab" id="stab-export" data-tab="export" role="tab" aria-selected="false" aria-controls="sgroup-export">📦 Ekspor</button>
               </div>
 
               <!-- Tab Kompresi -->
@@ -185,9 +172,7 @@
                 </label>
                 <div class="col-span-full">
                   <input id="qualitySlider" class="range block w-full cursor-pointer" type="range" min="0" max="100" value="75" />
-                  <span class="mt-1.5 flex justify-between font-mono text-[11px] font-bold text-zinc-600">
-                    <span>Ukuran Minimal</span><span>Kualitas Maksimal</span>
-                  </span>
+                  <span class="mt-1.5 flex justify-between font-mono text-[11px] font-bold text-zinc-600"> <span>Ukuran Minimal</span><span>Kualitas Maksimal</span> </span>
                 </div>
                 <label class="col-span-full font-mono text-xs font-black uppercase text-black">
                   Maksimum Ukuran File (KB, Opsional)
@@ -197,10 +182,12 @@
 
               <!-- Tab Dimensi -->
               <div id="sgroup-dimensions" class="setting-group grid gap-4 sm:grid-cols-2" role="tabpanel" aria-labelledby="stab-dimensions" tabindex="0" hidden>
-                <label class="font-mono text-xs font-bold text-black">Lebar (px)
+                <label class="font-mono text-xs font-bold text-black"
+                  >Lebar (px)
                   <input id="resizeWidth" type="number" min="1" max="12000" class="mt-1 w-full border-2 border-black bg-white p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" placeholder="Auto" />
                 </label>
-                <label class="font-mono text-xs font-bold text-black">Tinggi (px)
+                <label class="font-mono text-xs font-bold text-black"
+                  >Tinggi (px)
                   <input id="resizeHeight" type="number" min="1" max="12000" class="mt-1 w-full border-2 border-black bg-white p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" placeholder="Auto" />
                 </label>
                 <label class="col-span-full flex items-center gap-2 font-mono text-xs font-bold text-black cursor-pointer select-none">
@@ -216,13 +203,20 @@
 
               <!-- Tab Potong -->
               <div id="sgroup-crop" class="setting-group grid gap-3 sm:grid-cols-2" role="tabpanel" aria-labelledby="stab-crop" tabindex="0" hidden>
-                <label class="font-mono text-xs font-bold text-black">Awalan nama file
+                <label class="font-mono text-xs font-bold text-black"
+                  >Awalan nama file
                   <input id="namePrefix" placeholder="" class="mt-1 w-full border-2 border-black bg-white p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" />
                 </label>
-                <label class="font-mono text-xs font-bold text-black">Akhiran nama file
+                <label class="font-mono text-xs font-bold text-black"
+                  >Akhiran nama file
                   <input id="nameSuffix" value="-min" class="mt-1 w-full border-2 border-black bg-white p-2 font-mono text-sm shadow-[2px_2px_0px_#000]" />
                 </label>
-                <button id="cropBtn" type="button" class="col-span-full border-2 border-black bg-[#FF4B91] px-4 py-2.5 font-mono text-xs font-black uppercase text-white shadow-[2px_2px_0px_#000] hover:bg-[#F43F5E] disabled:opacity-50" disabled>
+                <button
+                  id="cropBtn"
+                  type="button"
+                  class="col-span-full border-2 border-black bg-[#FF4B91] px-4 py-2.5 font-mono text-xs font-black uppercase text-white shadow-[2px_2px_0px_#000] hover:bg-[#F43F5E] disabled:opacity-50"
+                  disabled
+                >
                   ✂️ Buka Pemotong Gambar
                 </button>
               </div>
@@ -268,9 +262,7 @@
                 </div>
                 <div class="overflow-hidden border-2 border-black bg-[#F0FDF4] shadow-[4px_4px_0px_#000] rounded-lg">
                   <img id="compressedPreview" class="aspect-[4/3] w-full object-contain p-2" alt="Pratinjau hasil kompresi" />
-                  <p class="border-t-2 border-black bg-[#DCFCE7] px-3 py-2 font-mono text-xs font-bold text-black">
-                    HASIL // <span id="newSize" class="font-black text-emerald-800"></span>
-                  </p>
+                  <p class="border-t-2 border-black bg-[#DCFCE7] px-3 py-2 font-mono text-xs font-bold text-black">HASIL // <span id="newSize" class="font-black text-emerald-800"></span></p>
                 </div>
               </div>
               <a
@@ -288,16 +280,12 @@
 
         <!-- Panel: Document & File Tools -->
         <div id="panelDocTools" class="main-tab-panel" role="tabpanel" aria-labelledby="tab-doc" tabindex="0" hidden>
-        <section class="surface border-[3px] sm:border-[4px] border-black bg-white p-5 sm:p-8 shadow-[8px_8px_0px_#000] rounded-lg" aria-label="Document tools">
+          <section class="surface border-[3px] sm:border-[4px] border-black bg-white p-5 sm:p-8 shadow-[8px_8px_0px_#000] rounded-lg" aria-label="Document tools">
             <!-- ZIP Creator -->
             <div class="mb-8">
               <div class="mb-3 flex items-center justify-between font-mono text-xs font-bold text-zinc-500"><span>// ZIP CREATOR</span><span>BUAT ARCHIVE DARI FILE APAPUN</span></div>
               <input id="docFileInput" type="file" multiple class="sr-only" />
-              <button
-                id="docDropzone"
-                type="button"
-                class="dropzone w-full border-[3px] border-dashed border-black bg-[#E0F2FE] hover:bg-[#BAE6FD] px-5 py-8 text-center shadow-[4px_4px_0px_#000] cursor-pointer"
-              >
+              <button id="docDropzone" type="button" class="dropzone w-full border-[3px] border-dashed border-black bg-[#E0F2FE] hover:bg-[#BAE6FD] px-5 py-8 text-center shadow-[4px_4px_0px_#000] cursor-pointer">
                 <span class="mx-auto mb-3 grid h-12 w-12 place-items-center border-2 border-black bg-[#FFE600] text-black shadow-[3px_3px_0px_#000] rounded-md" aria-hidden="true">📦</span>
                 <span class="block text-lg font-black uppercase tracking-wide text-black">Tarik File ke Sini</span>
                 <span class="mt-1 block font-mono text-xs font-bold text-zinc-600">PDF, DOC, JPG, MP3 dll — pack jadi .zip</span>
@@ -323,11 +311,7 @@
             <div class="mb-8">
               <div class="mb-3 flex items-center justify-between font-mono text-xs font-bold text-zinc-500"><span>// PDF TOOLS</span><span>MERGE &amp; COMPRESS</span></div>
               <input id="pdfFileInput" type="file" accept=".pdf,application/pdf" multiple class="sr-only" />
-              <button
-                id="pdfDropzone"
-                type="button"
-                class="dropzone w-full border-[3px] border-dashed border-black bg-[#FEF3C7] hover:bg-[#FDE68A] px-5 py-8 text-center shadow-[4px_4px_0px_#000] cursor-pointer"
-              >
+              <button id="pdfDropzone" type="button" class="dropzone w-full border-[3px] border-dashed border-black bg-[#FEF3C7] hover:bg-[#FDE68A] px-5 py-8 text-center shadow-[4px_4px_0px_#000] cursor-pointer">
                 <span class="mx-auto mb-3 grid h-12 w-12 place-items-center border-2 border-black bg-[#FF4B91] text-white shadow-[3px_3px_0px_#000] rounded-md" aria-hidden="true">📄</span>
                 <span class="block text-lg font-black uppercase tracking-wide text-black">Tarik File PDF ke Sini</span>
                 <span class="mt-1 block font-mono text-xs font-bold text-zinc-600">Gabungkan beberapa PDF atau kompres ukurannya</span>
@@ -363,11 +347,7 @@
             <div>
               <div class="mb-3 flex items-center justify-between font-mono text-xs font-bold text-zinc-500"><span>// SVG CLEANER</span><span>HAPUS METADATA &amp; WHITESPACE</span></div>
               <input id="svgFileInput" type="file" accept=".svg,image/svg+xml" class="sr-only" />
-              <button
-                id="svgDropzone"
-                type="button"
-                class="dropzone w-full border-[3px] border-dashed border-black bg-[#F0FDF4] hover:bg-[#DCFCE7] px-5 py-8 text-center shadow-[4px_4px_0px_#000] cursor-pointer"
-              >
+              <button id="svgDropzone" type="button" class="dropzone w-full border-[3px] border-dashed border-black bg-[#F0FDF4] hover:bg-[#DCFCE7] px-5 py-8 text-center shadow-[4px_4px_0px_#000] cursor-pointer">
                 <span class="mx-auto mb-3 grid h-12 w-12 place-items-center border-2 border-black bg-[#2ECC71] text-black shadow-[3px_3px_0px_#000] rounded-md" aria-hidden="true">✨</span>
                 <span class="block text-lg font-black uppercase tracking-wide text-black">Tarik File SVG ke Sini</span>
                 <span class="mt-1 block font-mono text-xs font-bold text-zinc-600">Hapus komentar, metadata, whitespace berlebih</span>
@@ -394,7 +374,7 @@
       </div>
       <!-- end tab container -->
 
-      <div class="mx-auto mt-8 grid max-w-2xl gap-5 sm:grid-cols-2">
+      <div class="mx-auto mt-8 grid max-w-xl gap-5">
         <aside class="border-[3px] border-black bg-[#FEF08A] p-6 text-center shadow-[5px_5px_0px_#000] text-black rounded-lg">
           <p class="font-black uppercase tracking-tight text-sm text-black">Terbantu Dengan QuickTools?</p>
           <p class="mt-1.5 font-mono text-xs font-semibold leading-relaxed text-zinc-700">Dukung serverless tools gratis ini agar selalu online dan diperbarui.</p>
@@ -409,7 +389,8 @@
           </a>
         </aside>
 
-        <aside aria-label="Slot iklan" class="flex min-h-36 flex-col items-center justify-center border-[3px] border-dashed border-black bg-white p-6 text-center shadow-[5px_5px_0px_#000] rounded-lg">
+        <!-- ponytail: hidden ad slot until AdSense unit approved & placed. Ceiling: HTML hidden; upgrade path: inject dynamic slot when ad script loads. -->
+        <aside aria-label="Slot iklan" hidden class="flex min-h-36 flex-col items-center justify-center border-[3px] border-dashed border-black bg-white p-6 text-center shadow-[5px_5px_0px_#000] rounded-lg">
           <span class="border border-black bg-[#3498DB] text-white px-2.5 py-0.5 font-mono text-[10px] font-black uppercase tracking-[0.2em] shadow-[1px_1px_0px_#000] rounded"> Advertisement </span>
           <span class="mt-2 font-mono text-xs font-bold text-zinc-500">Ruang untuk iklan yang relevan</span>
         </aside>

@@ -8,65 +8,88 @@ import { initZipCreator, initPdfTools, initSvgCleaner } from "./modules/doctools
 let selected = null,
   originalUrl = "",
   resultUrl = "";
+function updateProgress(done, total) {
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  byId("status").innerHTML = `
+    <div class="progress-track mb-2 h-3.5 w-full overflow-hidden rounded border-2 border-black bg-white shadow-[2px_2px_0px_#000]" role="progressbar" aria-valuenow="${done}" aria-valuemin="0" aria-valuemax="${total}" aria-label="${done} dari ${total} file selesai">
+      <div class="h-full bg-[#FFE600] transition-all duration-150" style="width: ${pct}%"></div>
+    </div>
+    <span class="font-mono font-bold text-xs text-black">${done} dari ${total} file selesai (${pct}%)</span>
+  `;
+}
 function render(items) {
   const area = byId("batchList");
   area.replaceChildren();
-  items.forEach((item, index) => {
-    const row = document.createElement("div");
-    row.className = "batch-item flex items-center justify-between gap-3 border-2 border-black bg-white p-3 text-sm shadow-[3px_3px_0px_#000] rounded-md";
-    row.dataset.index = index;
-    const info = document.createElement("div"),
-      name = document.createElement("p"),
-      detail = document.createElement("p");
-    info.className = "min-w-0";
-    name.className = "truncate font-mono font-bold text-xs sm:text-sm text-black";
-    name.textContent = item.file.name;
-    // KRITIS-3: zinc-600 on white → 5.8:1 ✅ WCAG AA
-    detail.className = "font-mono text-xs text-zinc-600";
-    detail.textContent = `${formatSize(item.file.size)} • ${item.state}${item.result ? ` • hasil ${formatSize(item.result.size)}` : ""}`;
-    info.append(name, detail);
-    // KRITIS-1: aria-label akurat per state | KRITIS-2: pisah tombol aksi & hapus
-    const actions = document.createElement("div");
-    actions.className = "flex items-center gap-1.5 shrink-0";
+  if (!items.length) {
+    // ponytail: Neubrutalist empty state banner. Ceiling: inline DOM injection; upgrade path: <template> tag in HTML if localization/custom themes needed.
+    const empty = document.createElement("div");
+    empty.className = "flex flex-col items-center justify-center p-6 sm:p-8 border-2 border-dashed border-black bg-white/80 text-center rounded-md shadow-[3px_3px_0px_#000]";
+    empty.innerHTML = `
+      <div class="h-12 w-12 border-2 border-black bg-[#FFE600] flex items-center justify-center text-2xl shadow-[2px_2px_0px_#000] mb-3 rounded" aria-hidden="true">
+        📁
+      </div>
+      <p class="font-mono font-black text-xs sm:text-sm uppercase tracking-wide text-black">Antrean Gambar Kosong</p>
+      <p class="font-mono text-xs font-bold text-zinc-600 mt-1 max-w-xs">Drop gambar ke area atas, klik untuk memilih file, atau tekan <kbd class="border border-black bg-zinc-100 px-1 py-0.5 rounded text-[10px]">Ctrl+V</kbd></p>
+    `;
+    area.append(empty);
+  } else {
+    items.forEach((item, index) => {
+      const row = document.createElement("div");
+      row.className = "batch-item flex items-center justify-between gap-3 border-2 border-black bg-white p-3 text-sm shadow-[3px_3px_0px_#000] rounded-md";
+      row.dataset.index = index;
+      const info = document.createElement("div"),
+        name = document.createElement("p"),
+        detail = document.createElement("p");
+      info.className = "min-w-0";
+      name.className = "truncate font-mono font-bold text-xs sm:text-sm text-black";
+      name.textContent = item.file.name;
+      // KRITIS-3: zinc-600 on white → 5.8:1 ✅ WCAG AA
+      detail.className = "font-mono text-xs text-zinc-600";
+      detail.textContent = `${formatSize(item.file.size)} • ${item.state}${item.result ? ` • hasil ${formatSize(item.result.size)}` : ""}`;
+      info.append(name, detail);
+      // KRITIS-1: aria-label akurat per state | KRITIS-2: pisah tombol aksi & hapus
+      const actions = document.createElement("div");
+      actions.className = "flex items-center gap-1.5 shrink-0";
 
-    const actionBtn = document.createElement("button");
-    actionBtn.type = "button";
-    actionBtn.className = "item-action border-2 border-black bg-[#FFE600] px-3 py-1 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-[#fde047] active:translate-x-0.5 active:translate-y-0.5 rounded";
-    if (item.result) {
-      actionBtn.textContent = "⬇ Unduh";
-      actionBtn.setAttribute("aria-label", `Unduh hasil ${item.file.name}`);
-      actionBtn.onclick = () => download(item.result, outputName(item.file, item.result.type));
-    } else {
-      actionBtn.textContent = "👁 Preview";
-      actionBtn.setAttribute("aria-label", `Preview ${item.file.name}`);
-      actionBtn.onclick = () => {
-        selected = item;
-        if (originalUrl) URL.revokeObjectURL(originalUrl);
-        originalUrl = URL.createObjectURL(item.file);
-        byId("selectedFile").hidden = false;
-        byId("fileName").textContent = item.file.name;
-        byId("fileSize").textContent = formatSize(item.file.size);
-        byId("originalPreview").src = originalUrl;
-        byId("resultArea").hidden = true;
+      const actionBtn = document.createElement("button");
+      actionBtn.type = "button";
+      actionBtn.className = "item-action border-2 border-black bg-[#FFE600] px-3 py-1 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-[#fde047] active:translate-x-0.5 active:translate-y-0.5 rounded";
+      if (item.result) {
+        actionBtn.textContent = "⬇ Unduh";
+        actionBtn.setAttribute("aria-label", `Unduh hasil ${item.file.name}`);
+        actionBtn.onclick = () => download(item.result, outputName(item.file, item.result.type));
+      } else {
+        actionBtn.textContent = "👁 Preview";
+        actionBtn.setAttribute("aria-label", `Preview ${item.file.name}`);
+        actionBtn.onclick = () => {
+          selected = item;
+          if (originalUrl) URL.revokeObjectURL(originalUrl);
+          originalUrl = URL.createObjectURL(item.file);
+          byId("selectedFile").hidden = false;
+          byId("fileName").textContent = item.file.name;
+          byId("fileSize").textContent = formatSize(item.file.size);
+          byId("originalPreview").src = originalUrl;
+          byId("resultArea").hidden = true;
+          render(queue.items);
+        };
+      }
+
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "border-2 border-black bg-white px-2.5 py-1 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-red-100 active:translate-x-0.5 active:translate-y-0.5 rounded";
+      removeBtn.textContent = "✕";
+      removeBtn.setAttribute("aria-label", `Hapus ${item.file.name} dari antrian`);
+      removeBtn.onclick = () => {
+        queue.items.splice(index, 1);
+        if (selected === item) selected = null;
         render(queue.items);
       };
-    }
 
-    const removeBtn = document.createElement("button");
-    removeBtn.type = "button";
-    removeBtn.className = "border-2 border-black bg-white px-2.5 py-1 font-mono text-xs font-bold text-black shadow-[2px_2px_0px_#000] hover:bg-red-100 active:translate-x-0.5 active:translate-y-0.5 rounded";
-    removeBtn.textContent = "✕";
-    removeBtn.setAttribute("aria-label", `Hapus ${item.file.name} dari antrian`);
-    removeBtn.onclick = () => {
-      queue.items.splice(index, 1);
-      if (selected === item) selected = null;
-      render(queue.items);
-    };
-
-    actions.append(actionBtn, removeBtn);
-    row.append(info, actions);
-    area.append(row);
-  });
+      actions.append(actionBtn, removeBtn);
+      row.append(info, actions);
+      area.append(row);
+    });
+  }
   byId("processBtn").disabled = !items.some((x) => !x.result) || items.some((x) => x.state === "Memproses");
   byId("zipBtn").disabled = !items.length || items.some((x) => !x.result);
   byId("cropBtn").disabled = !selected;
@@ -162,10 +185,18 @@ byId("processBtn").addEventListener("click", async () => {
   label.textContent = "⏳ Memproses…";
   byId("processBtn").disabled = true;
   byId("processSpinner").hidden = false;
-  byId("status").innerHTML = '<span class="progress-track mb-2 block"></span>Memproses gambar langsung di perangkat…';
+  const total = queue.items.length;
+  updateProgress(queue.items.filter((x) => x.result).length, total);
   try {
-    await queue.process();
-    byId("status").textContent = queue.items.some((x) => x.state.startsWith("Gagal")) ? "Beberapa gambar gagal diproses; periksa status." : "Selesai! Hasil siap diunduh.";
+    await queue.process((done, tot) => updateProgress(done, tot));
+    const finalDone = queue.items.filter((x) => x.result).length;
+    const hasFail = queue.items.some((x) => x.state.startsWith("Gagal"));
+    byId("status").innerHTML = `
+      <div class="progress-track mb-2 h-3.5 w-full overflow-hidden rounded border-2 border-black bg-white shadow-[2px_2px_0px_#000]" role="progressbar" aria-valuenow="${finalDone}" aria-valuemin="0" aria-valuemax="${total}" aria-label="${finalDone} dari ${total} file selesai">
+        <div class="h-full ${hasFail ? "bg-[#FF4B91]" : "bg-[#2ECC71]"} transition-all duration-150" style="width: 100%"></div>
+      </div>
+      <span class="font-mono font-bold text-xs text-black">${finalDone} dari ${total} file selesai${hasFail ? " (beberapa gagal)" : "! Hasil siap diunduh."}</span>
+    `;
     toast("Kompresi selesai!");
   } finally {
     byId("processSpinner").hidden = true;
@@ -245,5 +276,8 @@ document.querySelector('[aria-label="Pilih kategori alat"]')?.addEventListener("
 initZipCreator();
 initPdfTools();
 initSvgCleaner();
+
+// Render initial empty state
+render(queue.items);
 
 if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("./sw.js").catch(() => {});
