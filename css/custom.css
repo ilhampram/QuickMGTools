@@ -19,8 +19,8 @@ html {
 
 body {
   background-color: var(--neo-bg);
-  background-image: radial-gradient(#00000015 1.5px, transparent 1.5px);
-  background-size: 22px 22px;
+  background-image: radial-gradient(#00000030 1.8px, transparent 1.8px);
+  background-size: 18px 18px;
   color: #000000;
   min-height: 100vh;
 }
